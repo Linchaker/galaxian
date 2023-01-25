@@ -85,6 +85,7 @@ class Galaxian:
         """Start game by Play button"""
         button_clicked = self.button_play.rect.collidepoint(mouse_pos)
         if button_clicked and not self.stats.game_active:
+            self.config.initialize_dynamic_settings()
             self.stats.reset_stats()
             self.stats.game_active = True
 
@@ -167,6 +168,7 @@ class Galaxian:
             # new level
             self.bullets.empty()
             self._create_fleet()
+            self.config.increase_speed()
 
     def _check_aliens_bottom(self):
         """Check if alien is on bottom of screen"""
