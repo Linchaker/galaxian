@@ -8,6 +8,7 @@ from units.ship import Ship
 from units.bullet import Bullet
 from units.alien import Alien
 from game_stats import GameStats
+from units.button import Button
 
 
 class Galaxian:
@@ -31,6 +32,10 @@ class Galaxian:
 
         self._create_fleet()
 
+        # create Buttons
+        self.button_play = Button(self, "Play")
+
+
     def run_game(self):
         """Run game"""
 
@@ -48,6 +53,9 @@ class Galaxian:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
@@ -73,6 +81,22 @@ class Galaxian:
             # stop move ship to left
             self.ship.moving_left = False
 
+    def _check_play_button(self, mouse_pos):
+        """Start game by Play button"""
+        button_clicked = self.button_play.rect.collidepoint(mouse_pos)
+        if button_clicked and not self.stats.game_active:
+            self.stats.reset_stats()
+            self.stats.game_active = True
+
+            self.aliens.empty()
+            self.bullets.empty()
+
+            self._create_fleet()
+            self.ship.center_ship()
+
+            # hidden mouse
+            pygame.mouse.set_visible(False)
+
     def _update_screen(self):
         """Update screen image and switch to new screen"""
         # fill screen / add objects
@@ -81,6 +105,9 @@ class Galaxian:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
+
+        if not self.stats.game_active:
+            self.button_play.draw_button()
 
         # update screen
         pygame.display.flip()
@@ -170,11 +197,12 @@ class Galaxian:
             self.bullets.empty()
             # reset
             self._create_fleet()
-            self.ship.center_hit()
+            self.ship.center_ship()
             # pause game
             sleep(0.5)
         else:
             self.stats.game_active = False
+            pygame.mouse.set_visible(True)
 
 
 if __name__ == '__main__':
