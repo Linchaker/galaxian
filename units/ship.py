@@ -1,15 +1,19 @@
 import pygame
+from pygame.sprite import Sprite
 
 
-class Ship:
+class Ship(Sprite):
 
-    def __init__(self, ai_game):
+    def __init__(self, ai_game, isMain = True):
+        super().__init__()
         self.screen = ai_game.screen
         self.config = ai_game.config
         self.screen_rect = ai_game.screen.get_rect()
 
         # set img
         self.image = pygame.image.load('images/xwing.png')
+        if not isMain:
+            self.image = pygame.transform.scale(self.image, (50, 56))
         self.rect = self.image.get_rect()
         # image default position
         self.rect.midbottom = self.screen_rect.midbottom
