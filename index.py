@@ -73,7 +73,12 @@ class Galaxian:
         if event.key == pygame.K_q:
             sys.exit()
         if event.key == pygame.K_SPACE:
-            self._fire_bullet()
+            if self.stats.game_active:
+                self._fire_bullet()
+            else:
+                self.start_game()
+
+
 
     def _check_keyup_events(self, event):
         if event.key == pygame.K_RIGHT:
@@ -87,21 +92,7 @@ class Galaxian:
         """Start game by Play button"""
         button_clicked = self.button_play.rect.collidepoint(mouse_pos)
         if button_clicked and not self.stats.game_active:
-            self.config.initialize_dynamic_settings()
-            self.stats.reset_stats()
-            self.stats.game_active = True
-            self.scoreboard.prep_score()
-            self.scoreboard.prep_level()
-            self.scoreboard.prep_ships()
-
-            self.aliens.empty()
-            self.bullets.empty()
-
-            self._create_fleet()
-            self.ship.center_ship()
-
-            # hidden mouse
-            pygame.mouse.set_visible(False)
+            self.start_game()
 
     def _update_screen(self):
         """Update screen image and switch to new screen"""
@@ -223,6 +214,22 @@ class Galaxian:
             self.stats.game_active = False
             pygame.mouse.set_visible(True)
 
+    def start_game(self):
+        self.config.initialize_dynamic_settings()
+        self.stats.reset_stats()
+        self.stats.game_active = True
+        self.scoreboard.prep_score()
+        self.scoreboard.prep_level()
+        self.scoreboard.prep_ships()
+
+        self.aliens.empty()
+        self.bullets.empty()
+
+        self._create_fleet()
+        self.ship.center_ship()
+
+        # hidden mouse
+        pygame.mouse.set_visible(False)
 
 if __name__ == '__main__':
     # Init game
