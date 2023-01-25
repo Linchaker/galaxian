@@ -91,6 +91,7 @@ class Galaxian:
             self.stats.reset_stats()
             self.stats.game_active = True
             self.scoreboard.prep_score()
+            self.scoreboard.prep_level()
 
             self.aliens.empty()
             self.bullets.empty()
@@ -173,12 +174,16 @@ class Galaxian:
             for aliens in collisions.values():
                 self.stats.score += self.config.alien_points * len(aliens)
         self.scoreboard.prep_score()
+        self.scoreboard.check_high_score()
 
         if not self.aliens:
             # new level
             self.bullets.empty()
             self._create_fleet()
             self.config.increase_speed()
+            # level up
+            self.stats.level += 1
+            self.scoreboard.prep_level()
 
     def _check_aliens_bottom(self):
         """Check if alien is on bottom of screen"""
