@@ -9,3 +9,4 @@ class GameStats:
     def reset_stats(self):
         """Init dymamic stats"""
         self.ships_left = self.config.ship_limit
+        self.score = 0

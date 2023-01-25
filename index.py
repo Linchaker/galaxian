@@ -9,6 +9,7 @@ from units.bullet import Bullet
 from units.alien import Alien
 from game_stats import GameStats
 from units.button import Button
+from units.scoreboard import Scoreboard
 
 
 class Galaxian:
@@ -26,6 +27,7 @@ class Galaxian:
         pygame.display.set_caption("Galaxian")
 
         self.stats = GameStats(self)
+        self.scoreboard = Scoreboard(self)
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
@@ -88,6 +90,7 @@ class Galaxian:
             self.config.initialize_dynamic_settings()
             self.stats.reset_stats()
             self.stats.game_active = True
+            self.scoreboard.prep_score()
 
             self.aliens.empty()
             self.bullets.empty()
@@ -106,6 +109,8 @@ class Galaxian:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
+
+        self.scoreboard.show_score()
 
         if not self.stats.game_active:
             self.button_play.draw_button()
@@ -163,6 +168,11 @@ class Galaxian:
     def _check_bullet_alien_collisions(self):
         # check hits
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+
+        if collisions:
+            for aliens in collisions.values():
+                self.stats.score += self.config.alien_points * len(aliens)
+        self.scoreboard.prep_score()
 
         if not self.aliens:
             # new level
